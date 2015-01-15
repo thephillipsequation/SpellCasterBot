@@ -397,80 +397,7 @@ class WolfBot(SingleServerIRCBot):
       self.say_private(nm_to_n(e.source()), text)
 
 
-#
-# def start_game(self, game_starter):
-#    "Initialize a werewolf game -- assign roles and notify all players."
-#    chname, chobj = self.channels.items()[0]
-#
-#    if self.gamestate == self.GAMESTATE_RUNNING:
-#      self.say_public("A game started by %s is in progress; "
-#          "that person must end it." % self.game_starter)
-#      return
-#
-#    if self.gamestate == self.GAMESTATE_NONE:
-#      self._reset_gamedata()
-#      self.gamestate = self.GAMESTATE_STARTING
-#      self.game_starter = game_starter
-#      self.game_starter_last_seen = time.time()
-#      self.live_players.append(game_starter)
-#      self.say_public("A new game has been started by %s; "
-#          "say '%s: join' to join the game."
-#          % (self.game_starter, self.connection.get_nickname()))
-#      self.say_public("%s: Say '%s: start' when everyone has joined."
-#          % (self.game_starter, self.connection.get_nickname()))
-#      self.fix_modes()
-#      return
-#
-#    if self.gamestate == self.GAMESTATE_STARTING:
-#      if self.game_starter and game_starter != self.game_starter:
-#        self.say_public("Game startup was begun by %s; "
-#            "that person must finish starting it." % self.game_starter)
-#        return
-#      self.game_starter = game_starter
-#      self.game_starter_last_seen = time.time()
-#
-#      if len(self.live_players) < minUsers:
-#        self.say_public("Sorry, to start a game, there must be " + \
-#                        "at least active %d players."%(minUsers))
-#        self.say_public(("I count only %d active players right now: %s."
-#          % (len(self.live_players), self.live_players)))
-#
-#      else:
-#        # Randomly select two wolves and a seer.  Everyone else is a villager.
-#        users = self.live_players[:]
-#        self.say_public("A new game has begun! Please wait, assigning roles...")
-#        self.wolves.append(users.pop(random.randrange(len(users))))
-#	if len(self.live_players) > 7:
-#	  self.wolves.append(users.pop(random.randrange(len(users))))
-#	  self.say_public("There are 8 or more players so there are two werewolves.")
-#	else:
-#	  self.say_public("There are not enough players for two werewolves so there is only one werewolf.")
-#        self.originalwolves = self.wolves[:]
-#        self.seer = users.pop(random.randrange(len(users)))
-#        for user in users:
-#          self.villagers.append(user)
-#
-#        # Private message each user, tell them their role.
-#        self.say_private(self.seer, seer_intro_text)
-#        for wolf in self.wolves:
-#          self.say_private(wolf, wolf_intro_text)
-#        for villager in self.villagers:
-#          self.say_private(villager, villager_intro_text)
-#
-#        if self.debug:
-#          print "SEER: %s, WOLVES: %s" % (self.seer, self.wolves)
-#
-#        for text in new_game_texts:
-#          self.say_public(text)
-#        self.gamestate = self.GAMESTATE_RUNNING
-#
-#        self.fix_modes()
-#
-#        # Start game by putting bot into "night" mode.
-#        self.night()
-
-
- def start_game(self, game_starter):
+def start_game(self, game_starter):
     "Initialize a werewolf game -- assign roles and notify all players."
     chname, chobj = self.channels.items()[0]
 
@@ -540,6 +467,10 @@ class WolfBot(SingleServerIRCBot):
 
         # Start game by putting bot into "night" mode.
         self.night()
+
+
+
+
 
 #Fixed
   def end_game(self, game_ender):
