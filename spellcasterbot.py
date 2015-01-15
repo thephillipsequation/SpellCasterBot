@@ -1014,8 +1014,8 @@ configfile = 'wolfbot.conf'
 
 
 host = "irc.freenode.net"
-channel = "#wolf"
-nickname = "wolfbot"
+channel = "#spellcaster"
+nickname = "spellcaster"
 nickpass = ""
 
 s = string.split(host, ":", 1)

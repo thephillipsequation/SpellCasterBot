@@ -397,7 +397,80 @@ class WolfBot(SingleServerIRCBot):
       self.say_private(nm_to_n(e.source()), text)
 
 
-  def start_game(self, game_starter):
+#
+# def start_game(self, game_starter):
+#    "Initialize a werewolf game -- assign roles and notify all players."
+#    chname, chobj = self.channels.items()[0]
+#
+#    if self.gamestate == self.GAMESTATE_RUNNING:
+#      self.say_public("A game started by %s is in progress; "
+#          "that person must end it." % self.game_starter)
+#      return
+#
+#    if self.gamestate == self.GAMESTATE_NONE:
+#      self._reset_gamedata()
+#      self.gamestate = self.GAMESTATE_STARTING
+#      self.game_starter = game_starter
+#      self.game_starter_last_seen = time.time()
+#      self.live_players.append(game_starter)
+#      self.say_public("A new game has been started by %s; "
+#          "say '%s: join' to join the game."
+#          % (self.game_starter, self.connection.get_nickname()))
+#      self.say_public("%s: Say '%s: start' when everyone has joined."
+#          % (self.game_starter, self.connection.get_nickname()))
+#      self.fix_modes()
+#      return
+#
+#    if self.gamestate == self.GAMESTATE_STARTING:
+#      if self.game_starter and game_starter != self.game_starter:
+#        self.say_public("Game startup was begun by %s; "
+#            "that person must finish starting it." % self.game_starter)
+#        return
+#      self.game_starter = game_starter
+#      self.game_starter_last_seen = time.time()
+#
+#      if len(self.live_players) < minUsers:
+#        self.say_public("Sorry, to start a game, there must be " + \
+#                        "at least active %d players."%(minUsers))
+#        self.say_public(("I count only %d active players right now: %s."
+#          % (len(self.live_players), self.live_players)))
+#
+#      else:
+#        # Randomly select two wolves and a seer.  Everyone else is a villager.
+#        users = self.live_players[:]
+#        self.say_public("A new game has begun! Please wait, assigning roles...")
+#        self.wolves.append(users.pop(random.randrange(len(users))))
+#	if len(self.live_players) > 7:
+#	  self.wolves.append(users.pop(random.randrange(len(users))))
+#	  self.say_public("There are 8 or more players so there are two werewolves.")
+#	else:
+#	  self.say_public("There are not enough players for two werewolves so there is only one werewolf.")
+#        self.originalwolves = self.wolves[:]
+#        self.seer = users.pop(random.randrange(len(users)))
+#        for user in users:
+#          self.villagers.append(user)
+#
+#        # Private message each user, tell them their role.
+#        self.say_private(self.seer, seer_intro_text)
+#        for wolf in self.wolves:
+#          self.say_private(wolf, wolf_intro_text)
+#        for villager in self.villagers:
+#          self.say_private(villager, villager_intro_text)
+#
+#        if self.debug:
+#          print "SEER: %s, WOLVES: %s" % (self.seer, self.wolves)
+#
+#        for text in new_game_texts:
+#          self.say_public(text)
+#        self.gamestate = self.GAMESTATE_RUNNING
+#
+#        self.fix_modes()
+#
+#        # Start game by putting bot into "night" mode.
+#        self.night()
+
+
+ def start_game(self, game_starter):
     "Initialize a werewolf game -- assign roles and notify all players."
     chname, chobj = self.channels.items()[0]
 
@@ -468,9 +541,9 @@ class WolfBot(SingleServerIRCBot):
         # Start game by putting bot into "night" mode.
         self.night()
 
-
+#Fixed
   def end_game(self, game_ender):
-    "Quit a game in progress."
+    "Quit a game of Spellcaster in progress."
 
     if self.gamestate == self.GAMESTATE_NONE:
       self.say_public(\
@@ -481,262 +554,315 @@ class WolfBot(SingleServerIRCBot):
          self.game_starter))
     else:
       self.say_public("The game has ended.")
-      if self.gamestate == self.GAMESTATE_RUNNING:
-        self.reveal_all_identities()
+      #if self.gamestate == self.GAMESTATE_RUNNING:
+      #  self.reveal_all_identities()
       self._reset_gamedata()
       self.gamestate = self.GAMESTATE_NONE
       self.fix_modes()
 
 
-  def reveal_all_identities(self):
-    "Print everyone's identities."
-    if len(self.originalwolves)==2:
-      self.say_public(("*** The two wolves were %s and %s, the seer was %s. "
-        "Everyone else was a normal villager"
-        % (self.originalwolves[0], self.originalwolves[1], self.seer)))
-    else:
-      self.say_public(("*** The wolf was %s, the seer was %s. "
-        "Everyone else was a normal villager"
-	% (self.originalwolves[0], self.seer)))
+ # def reveal_all_identities(self):
+ #   "Print everyone's identities."
+ #   if len(self.originalwolves)==2:
+ #     self.say_public(("*** The two wolves were %s and %s, the seer was %s. "
+ #       "Everyone else was a normal villager"
+ #       % (self.originalwolves[0], self.originalwolves[1], self.seer)))
+ #   else:
+ #     self.say_public(("*** The wolf was %s, the seer was %s. "
+ #       "Everyone else was a normal villager"
+	#% (self.originalwolves[0], self.seer)))
 
-  def check_game_over(self):
-    """End the game if either villagers or werewolves have won.
-    Return 1 if game is over, 0 otherwise."""
+#  def check_game_over(self):
+#    """End the game if either villagers or werewolves have won.
+#    Return 1 if game is over, 0 otherwise."""
+#
+#    # If all wolves are dead, the villagers win.
+#    if len(self.wolves) == 0:
+#      self.say_public("The wolves are dead!  The \x034villagers\x0f\x02 have \x034won\x0f.")
+#      self.end_game(self.game_starter)
+#      return 1
+#
+#    # If the number of non-wolves is the same as the number of wolves,
+#    # then the wolves win.
+#    if (len(self.live_players) - len(self.wolves)) == len(self.wolves):
+#      self.say_public(\
+#        "There are now an equal number of villagers and werewolves.")
+#      msg = "The werewolves have no need to hide anymore; "
+#      msg = msg + "They attack the remaining villagers. "
+#      msg = msg + "The \x034werewolves\x0f\x02 have \x034won\x0f."
+#      self.say_public(msg)
+#      self.end_game(self.game_starter)
+#      return 1
+#
+#    return 0
+
+
+def check_game_over(self):
+    """End the game if one or both wizards hp falls below 1"""
 
     # If all wolves are dead, the villagers win.
-    if len(self.wolves) == 0:
-      self.say_public("The wolves are dead!  The \x034villagers\x0f\x02 have \x034won\x0f.")
+    if self.white_hp < 1 and self.black_hp >= 1:
+      self.say_public("The White Spellcaster is dead!  It looks like this time \x034Black\x0f\x02 has \x034won\x0f.")
+      self.end_game(self.game_starter)
+      return 1
+      
+    if self.black_hp <1 and self.white_hp >= 1:
+      self.say_public("The Black Spellcaster is dead!  It looks like this time \x034White\x0f\x02 has \x034won\x0f.")
       self.end_game(self.game_starter)
       return 1
 
     # If the number of non-wolves is the same as the number of wolves,
     # then the wolves win.
-    if (len(self.live_players) - len(self.wolves)) == len(self.wolves):
+    if  self.black_hp < 1 and self.white_hp <1:
       self.say_public(\
-        "There are now an equal number of villagers and werewolves.")
-      msg = "The werewolves have no need to hide anymore; "
-      msg = msg + "They attack the remaining villagers. "
-      msg = msg + "The \x034werewolves\x0f\x02 have \x034won\x0f."
+        "Double KO!!!")
+      msg = "What a twist! "
+      msg = msg + "Both Combatants have been Killed! "
+      msg = msg + "We need \x034two \x0f\x02 more\x034wizards\x0f."
       self.say_public(msg)
       self.end_game(self.game_starter)
       return 1
 
     return 0
 
+#  def check_night_done(self):
+#    "Check if nighttime is over.  Return 1 if night is done, 0 otherwise."
+#
+#    # Is the seer done seeing?
+#    if self.seer not in self.live_players:
+#      seer_done = 1
+#    else:
+#      if self.seer_target is None:
+#        seer_done = 0
+#      else:
+#        seer_done = 1
+#
+#    if (self.wolf_target is not None) and seer_done:
+#      return 1
+#    else:
+#      return 0
 
-  def check_night_done(self):
-    "Check if nighttime is over.  Return 1 if night is done, 0 otherwise."
+#code written to check turn status
+  def check_turn_done(self):
+    "Check if turn is over."
 
-    # Is the seer done seeing?
-    if self.seer not in self.live_players:
-      seer_done = 1
+    # Has white moved
+    if len(self.white_gestures) == 2 :
+      white_done = 1
     else:
-      if self.seer_target is None:
-        seer_done = 0
+      if len(self.white_gestures) != 2:
+        white_done = 0
       else:
-        seer_done = 1
+        white_done = 1
+        
+    if len(self.black_gestures) == 2:
+        black_done = 1
+    else:
+        if len(self.black_gestures) !=2:
+            black_done = 0
+        else:
+            black_done = 1
 
-    if (self.wolf_target is not None) and seer_done:
+    if  white_done is 0 and black_done is 0:
       return 1
     else:
       return 0
 
-
-  def night(self):
-    "Declare a NIGHT episode of gameplay."
-
-    chname, chobj = self.channels.items()[0]
-
-    self.time = "night"
-
-    # Clear any daytime variables
-    self.villager_votes = {}
-    self.tally = {}
-
-    # Declare nighttime.
-    self.print_alive()
-    for text in night_game_texts:
-      self.say_public(text)
-
-    # Give private instructions to wolves and seer.
-    if self.seer in self.live_players:
-      for text in night_seer_texts:
-        self.say_private(self.seer, text)
-    for text in night_werewolf_texts:
-      for wolf in self.wolves:
-        self.say_private(wolf, text)
-    if len(self.wolves) >= 2:
-      self.say_private(self.wolves[0],\
-                       ("The other werewolf is %s.  Confer privately."\
-                        % self.wolves[1]))
-      self.say_private(self.wolves[1],\
-                       ("The other werewolf is %s.  Confer privately."\
-                        % self.wolves[0]))
+#  def night(self):
+#    "Declare a NIGHT episode of gameplay."
+#
+#    chname, chobj = self.channels.items()[0]
+#
+#    self.time = "night"
+#
+#    # Clear any daytime variables
+#    self.villager_votes = {}
+#    self.tally = {}
+#
+#    # Declare nighttime.
+#    self.print_alive()
+#    for text in night_game_texts:
+#      self.say_public(text)
+#
+#    # Give private instructions to wolves and seer.
+#    if self.seer in self.live_players:
+#      for text in night_seer_texts:
+#        self.say_private(self.seer, text)
+#    for text in night_werewolf_texts:
+#      for wolf in self.wolves:
+#        self.say_private(wolf, text)
+#    if len(self.wolves) >= 2:
+#      self.say_private(self.wolves[0],\
+#                       ("The other werewolf is %s.  Confer privately."\
+#                        % self.wolves[1]))
+#      self.say_private(self.wolves[1],\
+#                       ("The other werewolf is %s.  Confer privately."\
+#                        % self.wolves[0]))
 
     # ... bot is now in 'night' mode;  goes back to doing nothing but
     # waiting for commands.
 
 
-  def day(self):
-    "Declare a DAY episode of gameplay."
-
-    self.time = "day"
-
-    # Discover the dead wolf victim.
-    self.say_public("\x034Day\x0f\x02 Breaks!  Sunlight pierces the sky.")
-    self.say_public(("The village awakes in horror..." + \
-                     "to find the mutilated body of \x034%s\x0f\x02!!"\
-                     % self.wolf_target))
-
-    if not self.kill_player(self.wolf_target):
-      # Clear all the nighttime voting variables:
-      self.seer_target = None
-      self.wolf_target = None
-      self.wolf_votes = {}
-
-      # Give daytime instructions.
-      self.print_alive()
-      for text in day_game_texts:
-        self.say_public(text)
-      self.say_public("Remember:  votes can be changed at any time.")
+#  def day(self):
+#    "Declare a DAY episode of gameplay."
+#
+#    self.time = "day"
+#
+#    # Discover the dead wolf victim.
+#    self.say_public("\x034Day\x0f\x02 Breaks!  Sunlight pierces the sky.")
+#    self.say_public(("The village awakes in horror..." + \
+#                     "to find the mutilated body of \x034%s\x0f\x02!!"\
+#                     % self.wolf_target))
+#
+#    if not self.kill_player(self.wolf_target):
+#      # Clear all the nighttime voting variables:
+#      self.seer_target = None
+#      self.wolf_target = None
+#      self.wolf_votes = {}
+#
+#      # Give daytime instructions.
+#      self.print_alive()
+#      for text in day_game_texts:
+#        self.say_public(text)
+#      self.say_public("Remember:  votes can be changed at any time.")
 
       # ... bot is now in 'day' mode;  goes back to doing nothing but
       # waiting for commands.
 
 
 
-  def see(self, e, who):
-    "Allow a seer to 'see' somebody."
-
-    if self.time != "night":
-      self.reply(e, "Are you a seer?  In any case, it's not nighttime.")
-    else:
-      if nm_to_n(e.source()) != self.seer:
-        self.reply(e, "Huh?")
-      else:
-        if who not in self.live_players:
-          self.reply(e, "That player either doesn't exist, or is dead.")
-        else:
-          if self.seer_target is not None:
-            self.reply(e, "You've already had your vision for tonight.")
-          else:
-            self.seer_target = who
-            if who in self.wolves:
-              self.reply(e, "You're sure that player is a werewolf!")
-            else:
-              self.reply(e, "You're sure that player is a normal villager.")
-            if self.check_night_done():
-              self.day()
-
-
-  def kill(self, e, who):
-    "Allow a werewolf to express intent to 'kill' somebody."
-    if self.time != "night":
-      self.reply(e, "Are you a werewolf?  In any case, it's not nighttime.")
-      return
-    if nm_to_n(e.source()) not in self.wolves:
-      self.reply(e, "Huh?")
-      return
-    if who not in self.live_players:
-      self.reply(e, "That player either doesn't exist, or is dead.")
-      return
-    if len(self.wolves) > 1:
-      # Multiple wolves are alive:
-      self.wolf_votes[nm_to_n(e.source())] = who
-      self.reply(e, "Your vote is acknowledged.")
-
-      # If all wolves have voted, look for agreement:
-      if len(self.wolf_votes) == len(self.wolves):
-        for killee in self.wolf_votes.values():
-          if who != killee:
-            break
-        else:
-          self.wolf_target = who
-          self.reply(e, "It is done. The werewolves agree.")
-          if self.check_night_done():
-            self.day()
-          return
-        self.reply(e, "Hm, I sense disagreement or ambivalence.")
-        self.reply(e, "You wolves should decide on one target.")
-    else:
-      # only one wolf alive, no need to agree with anyone.
-      self.wolf_target = who
-      self.reply(e, "Your decision is acknowledged.")
-      if self.check_night_done():
-        self.day()
+#  def see(self, e, who):
+#    "Allow a seer to 'see' somebody."
+#
+#    if self.time != "night":
+#      self.reply(e, "Are you a seer?  In any case, it's not nighttime.")
+#    else:
+#      if nm_to_n(e.source()) != self.seer:
+#        self.reply(e, "Huh?")
+#      else:
+#        if who not in self.live_players:
+#          self.reply(e, "That player either doesn't exist, or is dead.")
+#        else:
+#          if self.seer_target is not None:
+#            self.reply(e, "You've already had your vision for tonight.")
+#          else:
+#            self.seer_target = who
+#            if who in self.wolves:
+#              self.reply(e, "You're sure that player is a werewolf!")
+#            else:
+#              self.reply(e, "You're sure that player is a normal villager.")
+#            if self.check_night_done():
+#              self.day()
 
 
-  def kill_player(self, player):
-    "Make a player dead.  Return 1 if game is over, 0 otherwise."
-
-    self.live_players.remove(player)
-    self.dead_players.append(player)
-    self.fix_modes()
-
-    if player in self.wolves:
-      id = "a \x034wolf\x0f\x02!"
-      self.wolves.remove(player)
-    elif player == self.seer:
-      id = "the \x034seer\x0f\x02!"
-    else:
-      id = "a normal villager."
-
-    self.say_public(\
-        ("*** Examining the body, you notice that this player was %s" % id))
-    if self.check_game_over():
-      return 1
-    else:
-      self.say_public(("(%s is now dead, and should stay quiet.)") % player)
-      self.say_private(player, "You are now \x034dead\x0f\x02.  You may observe the game,")
-      self.say_private(player, "but please stay quiet until the game is over.")
-      return 0
-
-
-  def tally_votes(self):
-    "Count votes in villager_votes{}, store results in tally{}."
-
-    self.tally = {}
-    for key in self.villager_votes.keys():
-      lynchee = self.villager_votes[key]
-      if self.tally.has_key(lynchee):
-        self.tally[lynchee] += 1
-      else:
-        self.tally[lynchee] = 1
-
-
-  def check_for_majority(self):
-    """If there is a majority of lynch-votes for one player, return
-    that player's name.  Else return None."""
-
-    majority_needed = (len(self.live_players)/2) + 1
-    for lynchee in self.tally.keys():
-      if self.tally[lynchee] >= majority_needed:
-        return lynchee
-    else:
-      return None
+#  def kill(self, e, who):
+#    "Allow a werewolf to express intent to 'kill' somebody."
+#    if self.time != "night":
+#      self.reply(e, "Are you a werewolf?  In any case, it's not nighttime.")
+#      return
+#    if nm_to_n(e.source()) not in self.wolves:
+#      self.reply(e, "Huh?")
+#      return
+#    if who not in self.live_players:
+#      self.reply(e, "That player either doesn't exist, or is dead.")
+#      return
+#    if len(self.wolves) > 1:
+#      # Multiple wolves are alive:
+#      self.wolf_votes[nm_to_n(e.source())] = who
+#      self.reply(e, "Your vote is acknowledged.")
+#
+#      # If all wolves have voted, look for agreement:
+#      if len(self.wolf_votes) == len(self.wolves):
+#        for killee in self.wolf_votes.values():
+#          if who != killee:
+#            break
+#        else:
+#          self.wolf_target = who
+#          self.reply(e, "It is done. The werewolves agree.")
+#          if self.check_night_done():
+#            self.day()
+#          return
+#        self.reply(e, "Hm, I sense disagreement or ambivalence.")
+#        self.reply(e, "You wolves should decide on one target.")
+#    else:
+#      # only one wolf alive, no need to agree with anyone.
+#      self.wolf_target = who
+#      self.reply(e, "Your decision is acknowledged.")
+#      if self.check_night_done():
+#        self.day()
 
 
-  def print_tally(self):
-    "Publically display the vote tally."
+#  def kill_player(self, player):
+#    "Make a player dead.  Return 1 if game is over, 0 otherwise."
+#
+#    self.live_players.remove(player)
+#    self.dead_players.append(player)
+#    self.fix_modes()
+#
+#    if player in self.wolves:
+#      id = "a \x034wolf\x0f\x02!"
+#      self.wolves.remove(player)
+#    elif player == self.seer:
+#      id = "the \x034seer\x0f\x02!"
+#    else:
+#      id = "a normal villager."
+#
+#    self.say_public(\
+#        ("*** Examining the body, you notice that this player was %s" % id))
+#    if self.check_game_over():
+#      return 1
+#    else:
+#      self.say_public(("(%s is now dead, and should stay quiet.)") % player)
+#      self.say_private(player, "You are now \x034dead\x0f\x02.  You may observe the game,")
+#      self.say_private(player, "but please stay quiet until the game is over.")
+#      return 0
 
-    majority_needed = (len(self.live_players)/2) + 1
-    msg = ("%d votes needed for a majority.  Current vote tally: " \
-           % majority_needed)
-    for lynchee in self.tally.keys():
-      if self.tally[lynchee] > 1:
-        msg = msg + ("(%s : %d votes) " % (lynchee, self.tally[lynchee]))
-      else:
-        msg = msg + ("(%s : 1 vote) " % lynchee)
-    self.say_public(msg)
+
+#  def tally_votes(self):
+#    "Count votes in villager_votes{}, store results in tally{}."
+#
+#    self.tally = {}
+#    for key in self.villager_votes.keys():
+#      lynchee = self.villager_votes[key]
+#      if self.tally.has_key(lynchee):
+#        self.tally[lynchee] += 1
+#      else:
+#        self.tally[lynchee] = 1
 
 
-  def print_alive(self):
-    "Declare who's still alive."
-    msg = "The following players are still alive: %s"%', '.join(self.live_players)
-    self.say_public(msg)
-    if self.dead_players:
-      msg = "The following players are dead : %s"%', '.join(self.dead_players)
-      self.say_public(msg)
+#  def check_for_majority(self):
+#    """If there is a majority of lynch-votes for one player, return
+#    that player's name.  Else return None."""
+#
+#    majority_needed = (len(self.live_players)/2) + 1
+#    for lynchee in self.tally.keys():
+#      if self.tally[lynchee] >= majority_needed:
+#        return lynchee
+#    else:
+#      return None
+
+
+#  def print_tally(self):
+#    "Publically display the vote tally."
+#
+#    majority_needed = (len(self.live_players)/2) + 1
+#    msg = ("%d votes needed for a majority.  Current vote tally: " \
+#           % majority_needed)
+#    for lynchee in self.tally.keys():
+#      if self.tally[lynchee] > 1:
+#        msg = msg + ("(%s : %d votes) " % (lynchee, self.tally[lynchee]))
+#      else:
+#        msg = msg + ("(%s : 1 vote) " % lynchee)
+#    self.say_public(msg)
+
+
+  #def print_alive(self):
+  #  "Declare who's still alive."
+  #  msg = "The following players are still alive: %s"%', '.join(self.live_players)
+  #  self.say_public(msg)
+  #  if self.dead_players:
+  #    msg = "The following players are dead : %s"%', '.join(self.dead_players)
+  #    self.say_public(msg)
 
 
   def match_name(self, nick):
