@@ -997,6 +997,7 @@ def check_game_over(self):
       return
 
     # unknown command:  respond appropriately.
+    #these unknown command responses don't make much sense now that the time of day mechanic is stripped out
 
     # reply either to public channel, or to person who /msg'd
     if self.time is None:
@@ -1008,7 +1009,7 @@ def check_game_over(self):
 
 
 def usage(exitcode=1):
-  print "Usage: wolfbot.py [-d] [<config-file>]"
+  print "Usage: spellcasterbot.py [-d] [<config-file>]"
   sys.exit(exitcode)
 
 
